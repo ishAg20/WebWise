@@ -9,23 +9,29 @@ function App() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // const selectedModel = "Llama-3.1-8B-Instruct-q4f32_1-MLC";
-    // webllm
-    //   .CreateMLCEngine(selectedModel, {
-    //     initProgressCallback: (initProgress) => {
-    //       console.log("initProgress", initProgress);
-    //     },
-    //   })
-    //   .then((engine) => {
-    //     setEngine(engine);
-    //   });
+    const selectedModel = "Llama-3.1-8B-Instruct-q4f32_1-MLC";
+    webllm
+      .CreateMLCEngine(selectedModel, {
+        initProgressCallback: (initProgress) => {
+          console.log("initProgress", initProgress);
+        },
+      })
+      .then((engine) => {
+        setEngine(engine);
+      });
   }, []);
 
-  function sendMessageToLLM() {
+  async function sendMessageToLLM() {
     const tempMessages = [...messages];
     tempMessages.push({ role: "user", content: input });
     setMessages(tempMessages);
     setInput("");
+    const reply = await engine.chat.completions.create({
+      messages: tempMessages,
+    });
+    const response = reply.choices[0].message.content;
+    tempMessages.push({ role: "tool", content: text });
+    console.log(reply);
   }
 
   return (
