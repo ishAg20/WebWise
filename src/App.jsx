@@ -4,7 +4,9 @@ import * as webllm from "@mlc-ai/web-llm";
 
 function App() {
   const [input, setInput] = useState("");
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+    { role: "system", content: "Hello! How can I help you?" },
+  ]);
   const [engine, setEngine] = useState(null);
   const [isLoading, setIsLoading] = useState(false);
 
