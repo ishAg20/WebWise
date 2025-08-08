@@ -3,21 +3,30 @@ import "./app.scss";
 import * as webllm from "@mlc-ai/web-llm";
 
 function App() {
+  const [input, setInput] = useState("");
   const [messages, setMessages] = useState([]);
   const [engine, setEngine] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
+
   useEffect(() => {
-    const selectedModel = "Llama-3.1-8B-Instruct-q4f32_1-MLC";
-    const model = webllm.getModel(selectedModel);
-    webllm
-      .CreateMLCEngine(selectedModel, {
-        initProgressCallback: (initProgress) => {
-          console.log("initProgress", initProgress);
-        },
-      })
-      .then((engine) => {
-        setEngine(engine);
-      });
+    // const selectedModel = "Llama-3.1-8B-Instruct-q4f32_1-MLC";
+    // webllm
+    //   .CreateMLCEngine(selectedModel, {
+    //     initProgressCallback: (initProgress) => {
+    //       console.log("initProgress", initProgress);
+    //     },
+    //   })
+    //   .then((engine) => {
+    //     setEngine(engine);
+    //   });
   }, []);
+
+  function sendMessageToLLM() {
+    const tempMessages = [...messages];
+    tempMessages.push({ role: "user", content: input });
+    setMessages(tempMessages);
+    setInput("");
+  }
 
   return (
     <>
@@ -32,8 +41,27 @@ function App() {
               ))}
             </div>
             <div className="input-field">
-              <input type="text" placeholder="Ask anything"></input>
-              <button>Send</button>
+              <input
+                onChange={(e) => {
+                  setInput(e.target.value);
+                }}
+                value={input}
+                onKeyDown={(e) => {
+                  if (e.key === "Enter") {
+                    sendMessageToLLM();
+                  }
+                }}
+                type="text"
+                placeholder="Ask anything"
+              ></input>
+              <button
+                onClick={() => {
+                  sendMessageToLLM();
+                }}
+                className="send-button"
+              >
+                Send
+              </button>
             </div>
           </div>
         </section>
